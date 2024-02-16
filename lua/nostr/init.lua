@@ -1,17 +1,10 @@
+local strings = require("nostr.strings")
 local window = require("nostr.window")
 
 local M = {
   job_id = nil,
   win_id = nil,
 }
-
-local split_string_by_newline = function(str)
-  local t = {}
-  for line in str:gmatch("[^\r\n]+") do
-    table.insert(t, line)
-  end
-  return t
-end
 
 local timeline = function()
   local buf = vim.api.nvim_create_buf(false, true)
@@ -28,7 +21,7 @@ local timeline = function()
         local ok, post = pcall(vim.json.decode, line)
         if ok then
           vim.api.nvim_buf_set_lines(buf, -1, -1, false, { l })
-          vim.api.nvim_buf_set_lines(buf, -1, -1, false, split_string_by_newline(post.content))
+          vim.api.nvim_buf_set_lines(buf, -1, -1, false, strings.split_new_line(post.content))
         end
       end
     end
