@@ -1,3 +1,5 @@
+local window = require("nostr.window")
+
 local M = {
   job_id = nil,
   win_id = nil,
@@ -18,12 +20,14 @@ local timeline = function()
   M.win_id = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_buf(M.win_id, buf)
 
+  local l = string.rep("─", window.width())
+
   local on_event = function(job_id, data, event)
     for _, line in ipairs(data) do
       if line then
         local ok, post = pcall(vim.json.decode, line)
         if ok then
-          vim.api.nvim_buf_set_lines(buf, -1, -1, false, { "------------------------" })
+          vim.api.nvim_buf_set_lines(buf, -1, -1, false, { l })
           vim.api.nvim_buf_set_lines(buf, -1, -1, false, split_string_by_newline(post.content))
         end
       end
