@@ -1,7 +1,7 @@
-local M = {}
-
-M.job_id = nil
-M.win_id = nil
+local M = {
+  job_id = nil,
+  win_id = nil,
+}
 
 local split_string_by_newline = function(str)
   local t = {}
@@ -35,16 +35,29 @@ local timeline = function()
   })
 end
 
-local close = function()
-  if M.job_id == nil or M.win_id == nil then
+local job_close = function()
+  if M.job_id == nil then
     return
   end
 
   vim.fn.jobstop(M.job_id)
-  vim.api.nvim_win_close(M.win_id, true)
-
   M.job_id = nil
+end
+
+local win_close = function()
+  if M.win_id == nil then
+    return
+  end
+
+  if vim.api.nvim_win_is_valid(M.win_id) then
+    vim.api.nvim_win_close(M.win_id, true)
+  end
   M.win_id = nil
+end
+
+local close = function()
+  win_close()
+  job_close()
 end
 
 local post = function(text)
